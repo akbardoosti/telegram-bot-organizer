@@ -1,11 +1,11 @@
 <?php
 
-class TelegramAssistanAPI {
+class RNOMPA_CommerceYarBotAPI {
     private $table_name = 'website_inputs';
     private $status_table = 'telba_status'; 
     public function __construct() {
         add_action( 'rest_api_init', function () {
-            register_rest_route( 'wc/v3', '/statistics', array(
+            register_rest_route( 'wc/v3', '/rnompa-statistics', array(
                 'methods' => 'GET',
                 // 'methods' => WP_REST_Server::READABLE,
                 'callback' => [$this, 'get_statistics'],
@@ -16,7 +16,7 @@ class TelegramAssistanAPI {
         } );
 
         add_action( 'rest_api_init', function () {
-            register_rest_route( 'wc/v3', 'unseen-notifications', array(
+            register_rest_route( 'wc/v3', 'rnompa-unseen-notifications', array(
                 'methods' => 'GET',
                 'callback' => [$this, 'retrive_telegram_assistant_data'],
                 'permission_callback' => function ($request) {
@@ -25,7 +25,7 @@ class TelegramAssistanAPI {
             ) );
         } );
         add_action( 'rest_api_init', function () {
-            register_rest_route( 'wc/v3', 'site-information', array(
+            register_rest_route( 'wc/v3', 'rnompa-site-information', array(
                 'methods' => 'GET',
                 'callback' => [$this, 'get_website_information'],
                 'permission_callback' => function ($request) {
@@ -34,7 +34,7 @@ class TelegramAssistanAPI {
             ) );
         } );
         add_action( 'rest_api_init', function () {
-            register_rest_route( 'wc/v3', '/create-coupon', array(
+            register_rest_route( 'wc/v3', '/rnompa-create-coupon', array(
                 'methods' => 'POST',
                 'callback' => [$this, 'create_coupon'],
                 'permission_callback' => function ($request) {
@@ -43,7 +43,7 @@ class TelegramAssistanAPI {
             ) );
         } );
         add_action( 'rest_api_init', function () {
-            register_rest_route( 'wc/v3', '/daily-statistics', array(
+            register_rest_route( 'wc/v3', '/rnompa-daily-statistics', array(
                 'methods' => 'GET',
                 'callback' => [$this, 'get_daily_statistics'],
                 'permission_callback' => function ($request) {
@@ -328,14 +328,14 @@ class TelegramAssistanAPI {
     }
     function handle_my_ajax_action() {
         // Verify nonce for security
-        check_ajax_referer('telegram_bot_assistant', 'security');
+        check_ajax_referer('rnompa_commerce_yar_bot', 'security');
     
         // Get data from the AJAX request
         $some_data = sanitize_text_field($_POST['telegram_bot_token']);
     
         // Process the data
         $response = 'Received: ' . $some_data;
-        // $woo_key = $this->create_woo_key();
+        $woo_key = $this->create_woo_key();
         $base_url = get_site_url();
         $title = get_bloginfo('name');
         $custom_logo_id = get_theme_mod('custom_logo');
@@ -343,8 +343,21 @@ class TelegramAssistanAPI {
         // $string = $woo_key['consumer_key'].'&&'.$woo_key['consumer_secret'].'&&'.$base_url;
         // Send response
         wp_send_json( $this->imageToBase64($logo) );
-        //$this->encryptData($string, 'telegram-bot')
-    
+       
+        $response = wp_remote_post('https://www.commerceyar.ir/wp-json/commerceyar/v1/register', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+            'body' => json_encode([
+                'BotApiKey' => $some_data,
+                'WPSiteLogo' => $this->imageToBase64($logo),
+                'ConsumerSecret' => $woo_key['consumer_secret'],
+                'ConsumerKey' => $woo_key['consumer_key'],
+                'WPSiteTitle' => $title,
+                'WPSiteUri' => $base_url
+            ]),
+        ]);
+
         // Always exit to avoid extra output
         wp_die();
     }
@@ -409,9 +422,9 @@ class TelegramAssistanAPI {
         wp_enqueue_script('rnompa-ajax-script', get_template_directory_uri() . '/js/ajax-script.js', array('jquery'), null, true);
     
         // Localize the script with data
-        wp_localize_script('rnompa-ajax-script', 'rnompa_telegram_bot_assistant', array(
+        wp_localize_script('rnompa-ajax-script', 'rnompa_rnompa_commerce_yar_bot', array(
             'ajax_url' => admin_url('admin-ajax.php'),
-            'ajax_nonce' => wp_create_nonce('telegram_bot_assistant')
+            'ajax_nonce' => wp_create_nonce('rnompa_commerce_yar_bot')
         ));
     }
     function custom_settings_page() {
@@ -449,10 +462,10 @@ class TelegramAssistanAPI {
                     }
                     jQuery.ajax({
                         type: "post",
-                        url: rnompa_telegram_bot_assistant.ajax_url,
+                        url: rnompa_rnompa_commerce_yar_bot.ajax_url,
                         data: {
                             action: 'rnompa_generate_telegram_bot_string',
-                            security: rnompa_telegram_bot_assistant.ajax_nonce,
+                            security: rnompa_rnompa_commerce_yar_bot.ajax_nonce,
                             telegram_bot_token: token
                         },
                         dataType: "json",
@@ -460,7 +473,6 @@ class TelegramAssistanAPI {
                             jQuery('#rnompa-telegram-assistant-hashed-data').val(response);
                         }
                     });
-                    console.log(jQuery('#rnompa-telegram-assistan-token').val());
                 }
             </script>
 

@@ -1,19 +1,6 @@
 <?php
 
 /**
- * The file that defines the core plugin class
- *
- * A class definition that includes attributes and functions used across both the
- * public-facing side of the site and the admin area.
- *
- * @link       http://example.com
- * @since      1.0.0
- *
- * @package    Telegram_Bot_Assistant
- * @subpackage Telegram_Bot_Assistant/includes
- */
-
-/**
  * The core plugin class.
  *
  * This is used to define internationalization, admin-specific hooks, and
@@ -23,11 +10,11 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    Telegram_Bot_Assistant
- * @subpackage Telegram_Bot_Assistant/includes
- * @author     Your Name <email@example.com>
+ * @package    RNOMPA_CommerceYarBot
+ * @subpackage RNOMPA_CommerceYarBot/includes
+ * @author     Akbar Doosti <dousti1371@gmail.com>
  */
-class Telegram_Bot_Assistant {
+class RNOMPA_CommerceYarBot {
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -35,7 +22,7 @@ class Telegram_Bot_Assistant {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Telegram_Bot_Assistant_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      RNOMPA_CommerceYarBot_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -67,12 +54,12 @@ class Telegram_Bot_Assistant {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'TELGRAM_BOT_ASSISTANT_VERSION' ) ) {
-			$this->version = TELGRAM_BOT_ASSISTANT_VERSION;
+		if ( defined( 'RNOMPA_COMMERCE_YAR_BOT_VERSION' ) ) {
+			$this->version = RNOMPA_COMMERCE_YAR_BOT_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
-		$this->plugin_name = 'plugin-name';
+		$this->plugin_name = 'commerce-yar-bot';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -86,10 +73,10 @@ class Telegram_Bot_Assistant {
 	 *
 	 * Include the following files that make up the plugin:
 	 *
-	 * - Telegram_Bot_Assistant_Loader. Orchestrates the hooks of the plugin.
-	 * - Telegram_Bot_Assistant_i18n. Defines internationalization functionality.
-	 * - Telegram_Bot_Assistant_Admin. Defines all hooks for the admin area.
-	 * - Telegram_Bot_Assistant_Public. Defines all hooks for the public side of the site.
+	 * - RNOMPA_CommerceYarBot_Loader. Orchestrates the hooks of the plugin.
+	 * - RNOMPA_CommerceYarBot_i18n. Defines internationalization functionality.
+	 * - RNOMPA_CommerceYarBot_Admin. Defines all hooks for the admin area.
+	 * - RNOMPA_CommerceYarBot_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -103,36 +90,36 @@ class Telegram_Bot_Assistant {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-telegram-bot-assistant-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-rnompa-commerce-yar-bot-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-telegram-bot-assistant-i18n.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-rnompa-commerce-yar-bot-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-telegram-bot-assistant-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-rnompa-commerce-yar-bot-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-telegram-bot-assistant-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-rnompa-commerce-yar-bot-public.php';
 
-		$this->loader = new Telegram_Bot_Assistant_Loader();
+		$this->loader = new RNOMPA_CommerceYarBot_Loader();
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/classes/class-telegram-bot-assistant-api.php';
-		new TelegramAssistanAPI();
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/classes/class-rnompa-commerce-yar-bot-api.php';
+		new RNOMPA_CommerceYarBotAPI();
 
 	}
 
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Telegram_Bot_Assistant_i18n class in order to set the domain and to register the hook
+	 * Uses the RNOMPA_CommerceYarBot_i18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    1.0.0
@@ -140,7 +127,7 @@ class Telegram_Bot_Assistant {
 	 */
 	private function set_locale() {
 
-		$plugin_i18n = new Telegram_Bot_Assistant_i18n();
+		$plugin_i18n = new RNOMPA_CommerceYarBot_i18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 
@@ -155,7 +142,7 @@ class Telegram_Bot_Assistant {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Telegram_Bot_Assistant_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new RNOMPA_CommerceYarBotAdmin( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -171,7 +158,7 @@ class Telegram_Bot_Assistant {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Telegram_Bot_Assistant_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new RNOMPA_CommerceYarBotPublic( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -202,7 +189,7 @@ class Telegram_Bot_Assistant {
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @since     1.0.0
-	 * @return    Telegram_Bot_Assistant_Loader    Orchestrates the hooks of the plugin.
+	 * @return    RNOMPA_CommerceYarBot_Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
 		return $this->loader;

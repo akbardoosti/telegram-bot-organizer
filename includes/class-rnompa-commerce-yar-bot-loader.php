@@ -1,27 +1,17 @@
 <?php
 
 /**
- * Register all actions and filters for the plugin
- *
- * @link       http://example.com
- * @since      1.0.0
- *
- * @package    Telegram_Bot_Assistant
- * @subpackage Telegram_Bot_Assistant/includes
- */
-
-/**
  * Register all actions and filters for the plugin.
  *
  * Maintain a list of all hooks that are registered throughout
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    Telegram_Bot_Assistant
- * @subpackage Telegram_Bot_Assistant/includes
- * @author     Your Name <email@example.com>
+ * @package    RNOMPA_CommerceYarBot
+ * @subpackage RNOMPA_CommerceYarBot/includes
+ * @author     Akbar Doosti <dousti1371@gmail.com>
  */
-class Telegram_Bot_Assistant_Loader {
+class RNOMPA_CommerceYarBot_Loader {
 
 	/**
 	 * The array of actions registered with WordPress.

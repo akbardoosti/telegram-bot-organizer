@@ -8,8 +8,8 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    Telegram_Bot_Assistant
- * @subpackage Telegram_Bot_Assistant/public/partials
+ * @package    RNOMPA_CommerceYarBot
+ * @subpackage RNOMPA_CommerceYarBot/public/partials
  */
 ?>
 
