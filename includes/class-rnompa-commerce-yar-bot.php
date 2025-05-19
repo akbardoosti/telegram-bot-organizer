@@ -65,7 +65,16 @@ class RNOMPA_CommerceYarBot {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
+		// die('fdjfkj');
+		add_action('plugins_loaded', function() {
+			RNOMPA_Table_Manager::init();
+			RNOMPA_Statistics::init();
+			RNOMPA_Coupon::init();
+			RNOMPA_Site_Info::init();
+			RNOMPA_Notification::init();
+			RNOMPA_Ajax::init();
+			RNOMPA_REST_Routes::init();
+		});
 	}
 
 	/**
@@ -113,6 +122,15 @@ class RNOMPA_CommerceYarBot {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/classes/class-rnompa-commerce-yar-bot-api.php';
 		new RNOMPA_CommerceYarBotAPI();
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/classes/class-table-manager.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/classes/class-statistics.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/classes/class-coupon.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/classes/class-site-info.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/classes/class-notification.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/classes/class-ajax.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'api/class-rest-routes.php';
+
 
 	}
 

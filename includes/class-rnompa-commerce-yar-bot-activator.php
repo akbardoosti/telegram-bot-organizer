@@ -21,11 +21,14 @@ class RNOMPA_CommerceYarBot_Activator {
 	 */
 	public static function activate() {
 		self::import_files();
-		$api = new RNOMPA_CommerceYarBotAPI();
-		$api->activate();
+		// $api = new RNOMPA_CommerceYarBotAPI();
+		// $api->activate();
+
+		// Plugin activation hook
+		register_activation_hook(__FILE__, ['RNOMPA_Table_Manager', 'activate']);
 	}
 
 	public static function import_files() {
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/classes/class-rnompa-commerce-yar-bot-api.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . '/includes/classes/class-table-manager.php';
 	}
 }

@@ -41,6 +41,11 @@ class RNOMPA_CommerceYarBotAdmin {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
+		require_once plugin_dir_path( __FILE__ ).'class-rnompa-admin-settings-page.php';
+		
+		add_action('plugins_loaded', function() {
+			RNOMPA_Admin_Settings_Page::init();
+		});
 	}
 
 	/**
