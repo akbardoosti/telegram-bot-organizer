@@ -28,7 +28,7 @@ class RNOMPA_Ajax {
     
         // Process the data
         $response = 'Received: ' . $some_data;
-        $woo_key = $this->create_woo_key();
+        $woo_key = (new RNOMPA_Ajax)->create_woo_key();
         $base_url = get_site_url();
         $title = get_bloginfo('name');
         $custom_logo_id = get_theme_mod('custom_logo');

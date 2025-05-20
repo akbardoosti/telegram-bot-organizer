@@ -7,13 +7,10 @@ class RNOMPA_Statistics {
 
     public static function get_daily_statistics() {
         global $wpdb;
-        // ... (copy logic from get_daily_statistics method, adjust for static context)
         // For brevity, logic is same as original, but called as static
-        // Use $wpdb with table names ($wpdb->prefix.'website_inputs', etc.)
         // Return the same associative array as before
         // (Implementation omitted for brevity)
 
-        global $wpdb;
 
         // Get today's sales
         $today_sales = $wpdb->get_var("
@@ -129,7 +126,7 @@ class RNOMPA_Statistics {
         );
     }
 
-    public static function get_statistics($params) {
+    public static function get_statistics($request) {
         // ... (copy logic from get_statistics method, adjust for static context)
         // Use $params as input
         // Return the same associative array as before
