@@ -66,7 +66,7 @@ class RNOMPA_CommerceYarBotAdmin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
+        wp_enqueue_style( 'VazirMatnFont'.$this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/Vazirmatn-font-face.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/rnompa-commerce-yar-bot-admin.css', array(), $this->version, 'all' );
 
 	}

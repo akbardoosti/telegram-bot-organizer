@@ -5,8 +5,20 @@
     padding: 32px 24px 24px 24px;
     border-radius: 16px;
     box-shadow: 0 2px 16px rgba(80, 45, 158, 0.10);
-    font-family: "Vazirmatn", "Tahoma", Arial, sans-serif;
     direction: rtl;
+}
+.rnompa-settings-wrapper *,
+.rnompa-settings-wrapper .rnompa-settings-title,
+.rnompa-settings-wrapper .rnompa-footer-box,
+.rnompa-settings-wrapper .rnompa-footer-box h3{
+    font-family: "Vazirmatn", "Tahoma", Arial, sans-serif;
+}
+
+.rnompa-settings-wrapper label {
+    font-size: 0.9rem;
+}
+.rnompa-footer-box p {
+    font-size: 0.9rem;
 }
 
 .rnompa-settings-title {
@@ -48,7 +60,7 @@
     padding: 10px;
     border: 1.5px solid #a589d8;
     border-radius: 6px;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     background: #f7f4ff;
     color: #502d9e;
     transition: border 0.2s;
