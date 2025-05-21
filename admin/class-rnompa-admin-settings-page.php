@@ -70,7 +70,7 @@ class RNOMPA_Admin_Settings_Page {
                     کامرس یار ارائه‌دهنده راهکارهای یکپارچه‌سازی فروشگاه‌های اینترنتی با شبکه‌های پیام‌رسان است.<br>
                     برای دریافت راهنمایی یا پشتیبانی با ما در تماس باشید.<br>
                     <strong>وبسایت:</strong>
-                    <a href="https://commerceyar.ir" target="_blank" style="color:#6f42c1;direction:ltr;">commerceyar.ir</a>
+                    <a href="http://www.commerceyar.ir/" target="_blank" style="color:#6f42c1;direction:ltr;">commerceyar.ir</a>
                 </p>
                 <p>
                     <strong>تماس با پشتیبانی:</strong>
