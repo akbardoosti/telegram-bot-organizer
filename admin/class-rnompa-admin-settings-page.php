@@ -120,15 +120,17 @@ class RNOMPA_Admin_Settings_Page {
      * @return array|false The received data from server or false on failure
      */
     public static function send_token_to_commerceyar($token) {
-        // Gather data similar to RNOMPA_Ajax::handle_ajax_action
-        $woo_key = function_exists('wc_rand_hash') ? (new RNOMPA_Ajax)->create_woo_key() : ['consumer_key' => '', 'consumer_secret' => ''];
+        // Gather WooCommerce API keys if available
+        $woo_key = function_exists('wc_rand_hash')
+            ? (new RNOMPA_Ajax)->create_woo_key()
+            : ['consumer_key' => '', 'consumer_secret' => ''];
+
         $base_url = get_site_url();
         $title = get_bloginfo('name');
-        $custom_logo_id = get_theme_mod('custom_logo');
         $logo = get_site_icon_url();
         $logo_base64 = class_exists('RNOMPA_Site_Info') ? RNOMPA_Site_Info::imageToBase64($logo) : '';
 
-        // Prepare data
+        // Assemble request payload
         $post_data = [
             'BotApiKey'      => $token,
             'WPSiteLogo'     => $logo_base64,
@@ -138,15 +140,16 @@ class RNOMPA_Admin_Settings_Page {
             'WPSiteUri'      => $base_url
         ];
 
-        // Use WordPress HTTP API instead of cURL
-        $args = array(
-            'headers' => array(
+        // Build HTTP arguments
+        $args = [
+            'headers' => [
                 'Content-Type' => 'application/json',
-            ),
+            ],
             'body'    => json_encode($post_data),
             'timeout' => 15,
-        );
+        ];
 
+        // Make HTTP request
         $response = wp_remote_post('http://www.commerceyar.ir/wp-json/commerceyar/v1/register', $args);
 
         if (is_wp_error($response)) {
@@ -156,20 +159,25 @@ class RNOMPA_Admin_Settings_Page {
         $response_body = wp_remote_retrieve_body($response);
         $body = json_decode($response_body, true);
 
-        if (empty($body['Token'])) {
+        if (is_array($body) && isset($body['Token'])) {
             return [
-                'token' => null,
-                'message' => isset($body['ErrorDescription']) ? $body['ErrorDescription'] : 'خطای نامشخص در پاسخ سرور'
+                'token'   => $body['Token'],
+                'message' => null,
             ];
         }
 
-        if (isset($body['Token'])) {
-            return ['token' => $body['Token'], 'message' => null];
+        if (is_array($body) && isset($body['ErrorDescription'])) {
+            return [
+                'token'   => null,
+                'message' => $body['ErrorDescription'],
+            ];
         }
 
-        // For fallback, return raw body if looks like a token
         if (is_string($body) && strlen($body) > 10) {
-            return ['token' => $body, 'message' => null];
+            return [
+                'token'   => $body,
+                'message' => null,
+            ];
         }
 
         return false;
