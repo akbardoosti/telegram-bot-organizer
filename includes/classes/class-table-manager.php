@@ -54,11 +54,17 @@ class RNOMPA_Table_Manager {
         global $wpdb;
         $table_name = $wpdb->prefix . self::$website_inputs_table;
         $ip_addr = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
-        // Use $wpdb->prepare for the full query, table name concatenation is safe since it's generated not user input
-        $query = $wpdb->prepare(
-            "SELECT count(*) FROM `{$table_name}` WHERE `ip_addr` = %s AND LEFT(`created_at`, 10) = LEFT(NOW(), 10)", $ip_addr
-        );
-        $result = $wpdb->get_var($query);
+
+        // Try cache for today's visit count
+        $cache_key = 'rnompa_visit_' . md5($ip_addr . date('Y-m-d'));
+        $result = wp_cache_get($cache_key, 'rnompa');
+        if (false === $result) {
+            $query = $wpdb->prepare(
+                "SELECT count(*) FROM `$table_name` WHERE `ip_addr` = %s AND LEFT(`created_at`, 10) = LEFT(NOW(), 10)", $ip_addr
+            );
+            $result = $wpdb->get_var($query);
+            wp_cache_set($cache_key, $result, 'rnompa', 60); // cache for 60 seconds
+        }
 
         if ($result > 0) return;
 
@@ -92,6 +98,7 @@ class RNOMPA_Table_Manager {
     public static function add_to_status_table($order_id) {
         global $wpdb;
         $table_name = $wpdb->prefix . self::$status_table;
+        // Caching is not practical for insert/update, so we leave this as is.
         $wpdb->insert($table_name, [
             'post_id' => $order_id,
             'post_type' => 'order'
