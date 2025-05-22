@@ -4,7 +4,7 @@
  * The plugin bootstrap file
  *
  * This file is read by WordPress to generate the plugin information in the plugin
- * admin area. This file also includes all of the dependencies used by the plugin,
+ * admin area. This file also includes all the dependencies used by the plugin,
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
@@ -13,21 +13,21 @@
  * @package           RNOMPA_CommerceYarBot
  *
  * @wordpress-plugin
- * Plugin Name:       افزونه ربات کامرس یار
- * Plugin URI:        http://example.com/plugin-name-uri/
+ * Plugin Name:       Commerce Yar Bot
+ * Plugin URI:        http://www.commerceyar.ir/commerce-yar-bot
  * Description:       به کمک این افزونه میتوانید فروشگاه خود را از طریق ربات تلگرام مدیریت کنید.
  * Version:           1.0.0
  * Author:            CommerceYar
- * Author URI:        http://example.com/
+ * Author URI:        http://www.commerceyar.ir/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       rnompa-commerce-yar
+ * Text Domain:       commerce-yar-bot
  * Domain Path:       /languages
  */
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
-	die;
+    die;
 }
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -47,8 +47,8 @@ define( 'COMMERCE_YAR_PREFIX', 'RNOMPA' );
  * This action is documented in includes/class-rnompa-commerce-yar-bot-activator.php
  */
 function activate_rnompa_commerce_yar_bot() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-rnompa-commerce-yar-bot-activator.php';
-	RNOMPA_CommerceYarBot_Activator::activate();
+    require_once plugin_dir_path( __FILE__ ) . 'includes/class-rnompa-commerce-yar-bot-activator.php';
+    RNOMPA_CommerceYarBot_Activator::activate();
 }
 
 /**
@@ -56,8 +56,8 @@ function activate_rnompa_commerce_yar_bot() {
  * This action is documented in includes/class-rnompa-commerce-yar-bot-deactivator.php
  */
 function deactivate_rnompa_commerce_yar_bot() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-rnompa-commerce-yar-bot-deactivator.php';
-	RNOMPA_CommerceYarBot_Deactivator::deactivate();
+    require_once plugin_dir_path( __FILE__ ) . 'includes/class-rnompa-commerce-yar-bot-deactivator.php';
+    RNOMPA_CommerceYarBot_Deactivator::deactivate();
 }
 
 register_activation_hook( __FILE__, 'activate_rnompa_commerce_yar_bot' );
@@ -80,50 +80,12 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-rnompa-commerce-yar-bot.ph
  */
 function run_rnompa_commerce_yar_bot() {
 
-	$plugin = new RNOMPA_CommerceYarBot();
-	$plugin->run();
+    $plugin = new RNOMPA_CommerceYarBot();
+    $plugin->run();
 
 }
 run_rnompa_commerce_yar_bot();
 
-add_filter('pre_set_site_transient_update_plugins', 'rnompa_check_for_plugin_update');
-// Hook into the update check
-
-function rnompa_check_for_plugin_update($transient) {
-	
-    if (empty($transient->checked)) {
-        return $transient;
-    }
-	
-
-    // Define plugin data
-    $plugin_slug = 'commerce-yar-bot';
-    $current_version = '1.0.0'; // Update this to match your plugin's current version
-    $remote_url = 'https://wp93.ir/info.json'; // URL to your update JSON
-
-    // Get remote update data
-    $response = wp_remote_get($remote_url);
-    if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
-        return $transient;
-    }
-
-    $update_data = json_decode(wp_remote_retrieve_body($response));
-    if (!is_object($update_data) || version_compare($current_version, $update_data->version, '>=')) {
-        return $transient;
-    }
-
-    // Prepare update object
-    $obj = new stdClass();
-    $obj->slug = $plugin_slug;
-    $obj->plugin = $plugin_slug . '/' . $plugin_slug . '.php';
-    $obj->new_version = $update_data->version;
-    $obj->url = $update_data->homepage;
-    $obj->package = $update_data->download_link;
-
-    $transient->response[$obj->plugin] = $obj;
-
-    return $transient;
-}
 
 // Ensure the plugin update is recognized
 add_filter('plugins_api', 'rnompa_plugin_update_info', 10, 3);
