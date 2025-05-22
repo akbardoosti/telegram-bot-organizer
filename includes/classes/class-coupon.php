@@ -11,7 +11,7 @@ class RNOMPA_Coupon {
             $chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
             $length = 8;
             for ($i = 0; $i < $length; $i++) {
-                $result .= $chars[rand(0, strlen($chars) - 1)];
+                $result .= $chars[wp_rand(0, strlen($chars) - 1)];
             }
             $cp = new WC_Coupon($result);
             $cp->set_date_expires(time() + 3000000);
