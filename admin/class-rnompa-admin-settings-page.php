@@ -98,18 +98,17 @@ class RNOMPA_Admin_Settings_Page {
         }
 
         $server_token = self::send_token_to_commerceyar($token);
-
         if (!$server_token) {
             wp_send_json_error(['message' => 'دریافت پاسخ از سرور با خطا مواجه شد.']);
         } else if (empty($server_token['token'])) {
             wp_send_json_error(['message' => $server_token['message']]);
         }
 
-        $encrypted = self::encryptData($server_token, 'CommerceYar');
+        $encrypted = self::encryptData($server_token['token'], 'CommerceYar');
         update_option('rnompa_commerceyar_token', $encrypted);
 
         wp_send_json_success([
-            'token'   => $server_token,
+            'token'   => $server_token['token'],
             'message' => 'توکن با موفقیت ذخیره شد.'
         ]);
     }
@@ -137,6 +136,7 @@ class RNOMPA_Admin_Settings_Page {
             'WPSiteTitle'    => $title,
             'WPSiteUri'      => $base_url
         ];
+       
 
         // Initialize cURL
         $ch = curl_init('http://www.commerceyar.ir/wp-json/commerceyar/v1/register');
