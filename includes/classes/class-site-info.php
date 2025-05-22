@@ -60,7 +60,7 @@ class RNOMPA_Site_Info {
         // Basic Authentication for WooCommerce REST API
         $args = array(
             'headers' => array(
-                'Authorization' => $_SERVER['HTTP_AUTHORIZATION']
+                'Authorization' => isset($_SERVER['HTTP_AUTHORIZATION']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_AUTHORIZATION'])) : ''
             ),
         );
 
