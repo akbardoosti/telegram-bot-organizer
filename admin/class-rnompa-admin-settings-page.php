@@ -91,7 +91,7 @@ class RNOMPA_Admin_Settings_Page {
             wp_send_json_error(['message' => 'دسترسی غیرمجاز.']);
         }
 
-        $token = isset($_POST['token']) ? sanitize_text_field($_POST['token']) : '';
+        $token = isset($_POST['token']) ? sanitize_text_field(wp_unslash($_POST['token'])) : '';
 
         if (empty($token)) {
             wp_send_json_error(['message' => 'توکن وارد نشده است.']);
@@ -116,9 +116,9 @@ class RNOMPA_Admin_Settings_Page {
     /**
      * Sends token to CommerceYar server like the logic in class-ajax.php.
      * @param string $token
-     * @return string|false The received token from server or false on failure
+     * @return string The received token from server or false on failure
      */
-    public static function send_token_to_commerceyar($token) {
+    public static function send_token_to_commerceyar(string $token) {
         // Gather data similar to RNOMPA_Ajax::handle_ajax_action
         $woo_key = function_exists('wc_rand_hash') ? (new RNOMPA_Ajax)->create_woo_key() : ['consumer_key' => '', 'consumer_secret' => ''];
         $base_url = get_site_url();
@@ -136,25 +136,29 @@ class RNOMPA_Admin_Settings_Page {
             'WPSiteTitle'    => $title,
             'WPSiteUri'      => $base_url
         ];
-       
 
-        // Initialize cURL
-        $ch = curl_init('http://www.commerceyar.ir/wp-json/commerceyar/v1/register');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_data));
-        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        // Prepare the request arguments
+        $args = array(
+            'headers' => array(
+                'Content-Type' => 'application/json',
+            ),
+            'body'    => json_encode($post_data),
+            'timeout' => 15,
+            'method'  => 'POST',
+        );
 
-        // Execute and get response
-        $response_body = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        // Make the request using WordPress HTTP API
+        $response = wp_remote_post('http://www.commerceyar.ir/wp-json/commerceyar/v1/register', $args);
 
-        if (curl_errno($ch)) {
-            // Handle cURL error if needed
+        if (is_wp_error($response)) {
+            // Handle error
             $response_body = false;
+            $http_code = 0;
+        } else {
+            $response_body = wp_remote_retrieve_body($response);
+            $http_code = wp_remote_retrieve_response_code($response);
         }
-        curl_close($ch);
+
         $body = json_decode($response_body, true);
         if (empty($body['Token'])) {
             return ['token'=>null, 'message'=>$body['ErrorDescription']];
