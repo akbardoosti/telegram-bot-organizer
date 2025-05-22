@@ -39,9 +39,9 @@ class RNOMPA_Statistics {
             'post_status'    => array('wc-completed', 'wc-processing', 'wc-on-hold'),
             'date_query'     => array(
                 array(
-                    'year'  => date('Y'),
-                    'month' => date('m'),
-                    'day'   => date('d'),
+                    'year'  => gmdate('Y'),
+                    'month' => gmdate('m'),
+                    'day'   => gmdate('d'),
                 ),
             ),
             'posts_per_page' => -1, // Get all orders
@@ -172,9 +172,9 @@ class RNOMPA_Statistics {
         }
 
         $table_name = $wpdb->prefix . "website_inputs";
-        $google_sql = "SELECT COUNT(*) FROM `$table_name` WHERE `input_type` ='google_input' AND ( LEFT(created_at, 10) >= '$date_min' AND LEFT(created_at, 10) < '$date_max')";
-        $torob_sql = "SELECT COUNT(*) FROM `$table_name` WHERE `input_type` ='torob' AND ( LEFT(created_at, 10) >= '$date_min' AND LEFT(created_at, 10) < '$date_max')";
-        $telegram_bot_sql = "SELECT COUNT(*) FROM `$table_name` WHERE `input_type` ='telegram_bot' AND ( LEFT(created_at, 10) >= '$date_min' AND LEFT(created_at, 10) < '$date_max')";
+        $google_sql = $wpdb->prepare("SELECT COUNT(*) FROM `$table_name` WHERE `input_type` ='google_input' AND ( LEFT(created_at, 10) >= '$date_min' AND LEFT(created_at, 10) < '$date_max')");
+        $torob_sql = $wpdb->prepare("SELECT COUNT(*) FROM `$table_name` WHERE `input_type` ='torob' AND ( LEFT(created_at, 10) >= '$date_min' AND LEFT(created_at, 10) < '$date_max')");
+        $telegram_bot_sql = $wpdb->prepare("SELECT COUNT(*) FROM `$table_name` WHERE `input_type` ='telegram_bot' AND ( LEFT(created_at, 10) >= '$date_min' AND LEFT(created_at, 10) < '$date_max')");
 
         $google_result = 0;
         $torob_result = 0;
