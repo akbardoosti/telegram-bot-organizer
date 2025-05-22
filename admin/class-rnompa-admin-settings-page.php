@@ -38,7 +38,7 @@ class RNOMPA_Admin_Settings_Page {
         <div class="rnompa-settings-wrapper">
             <h1 class="rnompa-settings-title">تنظیمات کامرس یار</h1>
             <div class="rnompa-desc">
-                <p>در صورتی که توکن ربات تلگرامی کامرس یار را دارید وارد کنید. این توکن برای اتصال سایت شما به سرویس کامرس یار استفاده می‌شود.</p>
+                <p>در صورتی که توکن ربات تلگرامی کامرس یار را دارید وارد کنید. این توکن برای اتصال سایت شما به سرویس کامرس یار مورد استفاده قرار می‌گیرد.</p>
             </div>
             <form id="rnompa-commerceyar-form" class="rnompa-settings-form" onsubmit="return false;">
                 <div class="rnompa-form-group">
@@ -67,7 +67,7 @@ class RNOMPA_Admin_Settings_Page {
             <div class="rnompa-footer-box">
                 <h3>درباره ما</h3>
                 <p>
-                    کامرس یار ارائه‌دهنده راهکارهای یکپارچه‌سازی فروشگاه‌های اینترنتی با شبکه‌های پیام‌رسان است.<br>
+                    کامرس یار ارائه‌دهنده راهکارهای یکپارچه‌سازی فروشگاه‌های اینترنتی با شبکه‌های پیام‌رسان است.
                     برای دریافت راهنمایی یا پشتیبانی با ما در تماس باشید.<br>
                     <strong>وبسایت:</strong>
                     <a href="http://www.commerceyar.ir/" target="_blank" style="color:#6f42c1;direction:ltr;">commerceyar.ir</a>
@@ -91,24 +91,25 @@ class RNOMPA_Admin_Settings_Page {
             wp_send_json_error(['message' => 'دسترسی غیرمجاز.']);
         }
 
+        // Fix: unslash before sanitizing
         $token = isset($_POST['token']) ? sanitize_text_field(wp_unslash($_POST['token'])) : '';
 
         if (empty($token)) {
             wp_send_json_error(['message' => 'توکن وارد نشده است.']);
         }
 
-        $server_token = self::send_token_to_commerceyar($token);
-        if (!$server_token) {
+        $server_data = self::send_token_to_commerceyar($token);
+        if (!$server_data) {
             wp_send_json_error(['message' => 'دریافت پاسخ از سرور با خطا مواجه شد.']);
-        } else if (empty($server_token['token'])) {
-            wp_send_json_error(['message' => $server_token['message']]);
+        } else if (empty($server_data['token'])) {
+            wp_send_json_error(['message' => $server_data['message']]);
         }
 
-        $encrypted = self::encryptData($server_token['token'], 'CommerceYar');
+        $encrypted = self::encryptData($server_data['token'], 'CommerceYar');
         update_option('rnompa_commerceyar_token', $encrypted);
 
         wp_send_json_success([
-            'token'   => $server_token['token'],
+            'token'   => $server_data['token'],
             'message' => 'توکن با موفقیت ذخیره شد.'
         ]);
     }
@@ -116,9 +117,9 @@ class RNOMPA_Admin_Settings_Page {
     /**
      * Sends token to CommerceYar server like the logic in class-ajax.php.
      * @param string $token
-     * @return string The received token from server or false on failure
+     * @return array|false The received data from server or false on failure
      */
-    public static function send_token_to_commerceyar(string $token) {
+    public static function send_token_to_commerceyar($token) {
         // Gather data similar to RNOMPA_Ajax::handle_ajax_action
         $woo_key = function_exists('wc_rand_hash') ? (new RNOMPA_Ajax)->create_woo_key() : ['consumer_key' => '', 'consumer_secret' => ''];
         $base_url = get_site_url();
@@ -137,39 +138,38 @@ class RNOMPA_Admin_Settings_Page {
             'WPSiteUri'      => $base_url
         ];
 
-        // Prepare the request arguments
+        // Use WordPress HTTP API instead of cURL
         $args = array(
             'headers' => array(
                 'Content-Type' => 'application/json',
             ),
             'body'    => json_encode($post_data),
             'timeout' => 15,
-            'method'  => 'POST',
         );
 
-        // Make the request using WordPress HTTP API
         $response = wp_remote_post('http://www.commerceyar.ir/wp-json/commerceyar/v1/register', $args);
 
         if (is_wp_error($response)) {
-            // Handle error
-            $response_body = false;
-            $http_code = 0;
-        } else {
-            $response_body = wp_remote_retrieve_body($response);
-            $http_code = wp_remote_retrieve_response_code($response);
+            return false;
         }
 
+        $response_body = wp_remote_retrieve_body($response);
         $body = json_decode($response_body, true);
+
         if (empty($body['Token'])) {
-            return ['token'=>null, 'message'=>$body['ErrorDescription']];
+            return [
+                'token' => null,
+                'message' => isset($body['ErrorDescription']) ? $body['ErrorDescription'] : 'خطای نامشخص در پاسخ سرور'
+            ];
         }
 
         if (isset($body['Token'])) {
-            return ['token'=>$body['Token'], 'message'=>null];
+            return ['token' => $body['Token'], 'message' => null];
         }
+
         // For fallback, return raw body if looks like a token
-        elseif (is_string($body) && strlen($body) > 10) {
-            return $body;
+        if (is_string($body) && strlen($body) > 10) {
+            return ['token' => $body, 'message' => null];
         }
 
         return false;
