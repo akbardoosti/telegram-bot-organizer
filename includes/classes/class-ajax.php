@@ -24,7 +24,7 @@ class RNOMPA_Ajax {
         check_ajax_referer('rnompa_commerce_yar_bot', 'security');
     
         // Get data from the AJAX request
-        $some_data = sanitize_text_field($_POST['telegram_bot_token']);
+        $some_data = isset($_POST['telegram_bot_token']) ? sanitize_text_field(wp_unslash($_POST['telegram_bot_token'])) : '';
     
 
         $woo_key = (new RNOMPA_Ajax)->create_woo_key();
