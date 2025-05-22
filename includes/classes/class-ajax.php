@@ -26,8 +26,7 @@ class RNOMPA_Ajax {
         // Get data from the AJAX request
         $some_data = sanitize_text_field($_POST['telegram_bot_token']);
     
-        // Process the data
-        $response = 'Received: ' . $some_data;
+
         $woo_key = (new RNOMPA_Ajax)->create_woo_key();
         $base_url = get_site_url();
         $title = get_bloginfo('name');
