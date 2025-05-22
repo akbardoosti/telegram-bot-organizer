@@ -16,7 +16,7 @@ class RNOMPA_Table_Manager {
 
         // Set cookie for IP
         add_action('init', function() {
-            $ip_addr = $_SERVER['REMOTE_ADDR'] ?? '';
+            $ip_addr = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
             setcookie('sadri', $ip_addr, time() + 86400, '/');
         });
     }
@@ -53,10 +53,12 @@ class RNOMPA_Table_Manager {
     public static function set_visit() {
         global $wpdb;
         $table_name = $wpdb->prefix . self::$website_inputs_table;
-        $ip_addr = $_SERVER['REMOTE_ADDR'] ?? '';
-        $result = $wpdb->get_var($wpdb->prepare(
-            "SELECT count(*) FROM `$table_name` WHERE `ip_addr` = %s AND LEFT(`created_at`, 10) = LEFT(NOW(), 10)", $ip_addr
-        ));
+        $ip_addr = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+        // Use $wpdb->prepare for the full query, table name concatenation is safe since it's generated not user input
+        $query = $wpdb->prepare(
+            "SELECT count(*) FROM `{$table_name}` WHERE `ip_addr` = %s AND LEFT(`created_at`, 10) = LEFT(NOW(), 10)", $ip_addr
+        );
+        $result = $wpdb->get_var($query);
 
         if ($result > 0) return;
 
@@ -67,7 +69,7 @@ class RNOMPA_Table_Manager {
             ]);
             return;
         } elseif (!empty($_SERVER['HTTP_REFERER'])) {
-            $str = $_SERVER['HTTP_REFERER'];
+            $str = isset($_SERVER['HTTP_REFERER']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_REFERER'])) : '';
             if (preg_match('/google\.com/', $str)) {
                 $type = 'google_input';
             } elseif (preg_match('/torob\.com/', $str)) {
